@@ -1,7 +1,10 @@
-console.log('Hello Node!')
+import http from 'node:http'
+
+const PORT = 8000
 
 /*
 Challenge:
-1. Create a package.json file by typing "npm init" in the terminal.
-2. Answer the questions using the info in project_details.md.
+1. Recreate our server so we send a string over http when a GET request comes in. 
+2. Test it by making a GET request to http://localhost:8000 in the network widget.
+See hint.md for prompts.
 */
