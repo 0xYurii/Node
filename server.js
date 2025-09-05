@@ -1,11 +1,11 @@
 import http from 'node:http'
 import { getDataFromDB } from './database/db.js'
-import { sendJSON } from './utils/sendJSON.js'
-import { send } from 'node:process'
-
+import { sendJSONResponse } from './utils/sendJSONResponse.js'
+import { getDataByPathParams } from './utils/getDataByPathParams.js'
 /*
 Challenge:
-  1. Add an 'api/country/<country>' route.
+  1. Create a util function to filter data.
+  2. Wire it up and delete unneeded code.
 */
 
 
@@ -16,19 +16,21 @@ const server = http.createServer(async(req, res) => {
   const destinations = await getDataFromDB()
   
   if (req.url === '/api' && req.method === 'GET') {
-    sendJSON(res,200,destinations)
-  }else if(req.url.startsWith("/api/continent") && req.method === 'GET'){
-    const continent=req.url.split('/').pop()
-    const continentArray=destinations.filter(el=>el.continent.toLowerCase()===continent.toLowerCase())
-    sendJSON(res,200,continentArray)
+    sendJSONResponse(res,200,destinations)
+  } else if(req.url.startsWith("/api/continent") && req.method === 'GET'){
+
+    const continent = req.url.split('/').pop()
+    const filteredData = getDataByPathParams(destinations,'continent',continent)
+    sendJSONResponse(res,200,filteredData)
 
 
-  }else if(req.url.startsWith("/api/country") && req.method === 'GET'){
-    const country=req.url.split('/').pop()
-    const countryArray=destinations.filter(el=>el.country.toLowerCase()===country.toLowerCase())
-    sendJSON(res,200,countryArray)
+  } else if(req.url.startsWith("/api/country") && req.method === 'GET'){
+    const country = req.url.split('/').pop()
+    const filteredData = getDataByPathParams(destinations,'country',country)
+    sendJSONResponse(res,200,filteredData)
+    
   } else {
-    sendJSON(res,404,{error: "not found", message: "The requested route does not exist"})
+    sendJSONResponse(res,404,{error: "not found", message: "The requested route does not exist"})
   }
 })
 
