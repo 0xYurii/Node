@@ -1,6 +1,6 @@
 
-export function sendJSON(res,data){
+export function sendJSON(res,statusCode,data){
     res.setHeader('Content-Type', 'application/json')
-    res.statusCode=200
+    res.statusCode=statusCode
     res.end(JSON.stringify(data))
 }

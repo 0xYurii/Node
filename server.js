@@ -1,11 +1,11 @@
 import http from 'node:http'
-import { getDataFromDB } from './ds.js'
-import { sendJSON } from './sendJSON.js'
+import { getDataFromDB } from './database/db.js'
+import { sendJSON } from './utils/sendJSON.js'
+import { send } from 'node:process'
 
 /*
 Challenge:
-  1. Create a utility function to make this code DRYer.
-  2. Delete unnecessary code.
+  1. Add an 'api/country/<country>' route.
 */
 
 
@@ -16,17 +16,19 @@ const server = http.createServer(async(req, res) => {
   const destinations = await getDataFromDB()
   
   if (req.url === '/api' && req.method === 'GET') {
-    sendJSON(res,destinations)
+    sendJSON(res,200,destinations)
   }else if(req.url.startsWith("/api/continent") && req.method === 'GET'){
     const continent=req.url.split('/').pop()
     const continentArray=destinations.filter(el=>el.continent.toLowerCase()===continent.toLowerCase())
-    sendJSON(res,continentArray)
+    sendJSON(res,200,continentArray)
 
 
+  }else if(req.url.startsWith("/api/country") && req.method === 'GET'){
+    const country=req.url.split('/').pop()
+    const countryArray=destinations.filter(el=>el.country.toLowerCase()===country.toLowerCase())
+    sendJSON(res,200,countryArray)
   } else {
-    res.setHeader('Content-Type', 'application/json')
-    res.statusCode=404
-    res.end(JSON.stringify({error: "not found", message: "The requested route does not exist"}))
+    sendJSON(res,404,{error: "not found", message: "The requested route does not exist"})
   }
 })
 
